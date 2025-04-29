@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Interactive</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Google Fonts - Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Notre CSS personnalisé -->
+    <link rel="stylesheet" href="css/carte-style.css">
+</head>
+<body>
+    <div class="site-container">
+
+        <!-- Titre de la page -->
+        <div class="page-title">
+            <h1>Carte interactive</h1>
+            <p>Découvrez notre territoire et ses points d'intérêt</p>
+        </div>
+
+        <!-- Conteneur principal -->
+        <div class="main-container">
+            <!-- Filtres -->
+            <div class="filters-panel">
+                <div class="logo-container">
+                    <img src="image/logo-office-de-tourisme.jpg" alt="Logo Office de Tourisme" class="logo">
+                </div>
+                <div class="filters-header">
+                    <h2>Filtrer par</h2>
+                    <button class="close-filters"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div class="filter-group">
+                    <h3 class="filter-title">Patrimoine Architectural</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" data-category="activites" data-subcategory="patrimoine"> Patrimoine bâti monumental</label>
+                        <label><input type="checkbox" data-category="activites" data-subcategory="religieux"> Patrimoine Religieux</label>
+                        <label><input type="checkbox" data-category="activites" data-subcategory="traditionnel"> Bâti Traditionnel</label>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3 class="filter-title">Zones naturelles</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" data-category="activites" data-subcategory="nature"> Etangs et Rivières</label>
+                        <label><input type="checkbox" data-category="geographie" data-subcategory="rivieres" checked> Rivières</label>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3 class="filter-title">Autres Points</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" data-category="activites" data-subcategory="curiosite"> Curiosité</label>
+                    </div>
+                </div>
+                
+                <button class="reset-filters">Réinitialiser les filtres</button>
+            </div>
+            
+            <!-- Carte -->
+            <div id="map-container">
+                <div id="map"></div>
+                <button class="toggle-filters-btn">
+                    <i class="fas fa-filter"></i> Filtrer
+                </button>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="image/logo-office-de-tourisme.jpg" alt="Logo Office de Tourisme" class="logo">
+                </div>
+                <div class="footer-contact">
+                    <h3>Office de tourisme</h3>
+                    <p>Tél. 01 30 59 53 86</p>
+                    <a href="#" class="footer-link">Venez nous rencontrer</a>
+                    <a href="#" class="footer-link">On reste en contact</a>
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.tourisme-pays-houdanais.fr/groupes/" class="footer-link">Espace groupe</a>
+                    <a href="https://www.tourisme-pays-houdanais.fr/espace-pro/" class="footer-link">Espace pro</a>
+                    <a href="https://www.tourisme-pays-houdanais.fr/informations-pratiques/documentation-et-brochures/" class="footer-link">Brochures</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2023 Office de Tourisme - Tous droits réservés</p>
+                <div class="footer-legal">
+                    <a href="#">Plan du site</a>
+                    <a href="#">Mentions légales</a>
+                    <a href="#">Politique de confidentialité</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- MarkerCluster JS -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    
+    <!-- jQuery -->
+    <script src="script/jquery.js"></script>
+    
+    <!-- Données -->
+    <script src="donnees/POI.js"></script>
+    <script src="donnees/fond.js"></script>
+    <script src="donnees/rivieres.js"></script>
+    
+    <!-- Modal pour l'agrandissement des images -->
+    <div class="image-modal">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content">
+            <img id="modal-img" src="" alt="Image agrandie">
+        </div>
+    </div>
+
+    <!-- Notre script personnalisé -->
+    <script src="script/carte-interactive.js"></script>
+</body>
+</html>
