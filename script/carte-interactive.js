@@ -1,6 +1,8 @@
 // Variables globales
 let map;
-let markers = L.markerClusterGroup();
+let markers = L.markerClusterGroup({
+    showCoverageOnHover: false // Désactiver l'affichage du polygone au survol
+});
 let allMarkers = {};
 let categoryFilters = {};
 let rivieresLayer; // Couche pour les rivières
@@ -13,7 +15,7 @@ function initMap() {
         zoom: 11,
         zoomControl: false,
         maxZoom: 20,
-        scrollWheelZoom: false // Désactiver le zoom par molette
+        scrollWheelZoom: true // Activer le zoom par molette
     });
 
     // Ajout du fond de carte OpenStreetMap
