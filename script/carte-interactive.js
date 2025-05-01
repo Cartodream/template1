@@ -6,6 +6,8 @@ let markers = L.markerClusterGroup({
 let allMarkers = {};
 let categoryFilters = {};
 let rivieresLayer; // Couche pour les rivières
+let speechSynthesis = window.speechSynthesis; // API de synthèse vocale
+let isSpeaking = false; // État de la lecture vocale
 
 // Initialisation de la carte
 function initMap() {
@@ -411,6 +413,95 @@ function setupImageModal() {
     });
 }
 
+// Fonction pour la lecture vocale du texte
+function speakText(text, button) {
+    // Si déjà en train de parler, on arrête
+    if (isSpeaking) {
+        speechSynthesis.cancel();
+        isSpeaking = false;
+        
+        // Réinitialiser tous les boutons de lecture
+        document.querySelectorAll('.speak-button').forEach(btn => {
+            btn.innerHTML = '<i class="fas fa-volume-up"></i> Lire';
+            btn.classList.remove('speaking');
+        });
+        
+        return;
+    }
+    
+    // Créer un nouvel objet d'énoncé
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Configurer la voix en français si disponible
+    const voices = speechSynthesis.getVoices();
+    const frenchVoice = voices.find(voice => voice.lang.includes('fr'));
+    if (frenchVoice) {
+        utterance.voice = frenchVoice;
+    }
+    
+    utterance.lang = 'fr-FR';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    
+    // Événement de fin de lecture
+    utterance.onend = function() {
+        isSpeaking = false;
+        button.innerHTML = '<i class="fas fa-volume-up"></i> Lire';
+        button.classList.remove('speaking');
+    };
+    
+    // Événement d'erreur
+    utterance.onerror = function() {
+        isSpeaking = false;
+        button.innerHTML = '<i class="fas fa-volume-up"></i> Lire';
+        button.classList.remove('speaking');
+    };
+    
+    // Changer l'apparence du bouton
+    button.innerHTML = '<i class="fas fa-pause"></i> Pause';
+    button.classList.add('speaking');
+    
+    // Lire le texte
+    speechSynthesis.speak(utterance);
+    isSpeaking = true;
+}
+
+// Fonction pour extraire le texte lisible d'un élément HTML
+function getReadableText(element) {
+    // Cloner l'élément pour ne pas modifier l'original
+    const clone = element.cloneNode(true);
+    
+    // Supprimer les éléments qui ne doivent pas être lus
+    const elementsToRemove = clone.querySelectorAll('button, .speak-button');
+    elementsToRemove.forEach(el => el.remove());
+    
+    // Récupérer le texte
+    let text = clone.textContent || '';
+    
+    // Nettoyer le texte
+    text = text.replace(/\s+/g, ' ').trim();
+    
+    return text;
+}
+
+// Fonction pour ajouter un bouton de lecture à un élément
+function addSpeakButton(element) {
+    // Créer le bouton
+    const speakButton = document.createElement('button');
+    speakButton.className = 'speak-button';
+    speakButton.innerHTML = '<i class="fas fa-volume-up"></i> Lire';
+    
+    // Ajouter l'événement de clic
+    speakButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        const text = getReadableText(element);
+        speakText(text, this);
+    });
+    
+    // Ajouter le bouton à l'élément
+    element.appendChild(speakButton);
+}
+
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     initMap();
@@ -424,4 +515,29 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.header-actions').classList.toggle('active');
         });
     }
+    
+    // Initialiser les voix pour la synthèse vocale
+    if (speechSynthesis) {
+        // Charger les voix disponibles
+        speechSynthesis.onvoiceschanged = function() {
+            speechSynthesis.getVoices();
+        };
+    }
+    
+    // Ajouter un écouteur d'événements pour les popups Leaflet
+    map.on('popupopen', function(e) {
+        const popupContent = e.popup._contentNode;
+        if (popupContent) {
+            // Ajouter un bouton de lecture à la popup
+            addSpeakButton(popupContent);
+        }
+    });
+    
+    // Arrêter la lecture lorsqu'une popup est fermée
+    map.on('popupclose', function() {
+        if (isSpeaking) {
+            speechSynthesis.cancel();
+            isSpeaking = false;
+        }
+    });
 });
